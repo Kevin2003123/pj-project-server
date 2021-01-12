@@ -1,0 +1,44 @@
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  avatar: String
+  images: [Image!]!
+  createdAt: String!
+  token: String!
+}
+
+type Image {
+  id: ID!
+  user_id: ID!
+  name: String!
+  image: String!
+  author: User!
+  createdAt: String!
+}
+
+type Query {
+  users: [User!]!
+  images(search: String, page: Int): [Image!]!
+  image(id: ID!): Image!
+}
+
+type Mutation {
+  createUser(data: CreateUserInput!): User!
+  createImage(data: CreateImageInput!): Image!
+  login(email: String!, password: String!): User!
+  auth(token: String!): User!
+  updateAvatar(avatar: String!): String!
+}
+
+input CreateUserInput {
+  name: String!
+  password: String!
+  verifyPassword: String!
+  email: String!
+}
+
+input CreateImageInput {
+  name: String!
+  image: String!
+}
