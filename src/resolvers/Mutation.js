@@ -47,14 +47,14 @@ const Mutation = {
 
     const createImage = {
       name: data.name,
-      image: data.image,
+      src: data.src,
       user_id
     };
 
     await knex('images').insert(createImage);
 
     const [image] = await knex
-      .select('id', 'user_id', 'name', 'image', 'createdAt')
+      .select('id', 'user_id', 'name', 'src', 'createdAt')
       .from('images')
       .where('user_id', user_id)
       .orderBy('createdAt', 'DESC')

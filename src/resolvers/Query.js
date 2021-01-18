@@ -10,26 +10,47 @@ const Query = {
     if (!page) {
       page = 0;
     } else {
-      page = page * 5 - 5;
+      page = page * 3 - 3;
     }
     console.log(search);
     if (!search) {
       search = '';
     }
+    const res = {};
+    const searchImage = await knex('images')
+      .join('users', 'users.id', '=', 'images.user_id')
+      .select(
+        'images.id',
+        'images.user_id',
+        'images.name',
+        'images.src',
+        'images.createdAt',
+        'users.name as userName',
+        'users.avatar'
+      )
 
-    const searchImage = await knex
-      .select('id', 'user_id', 'name', 'image', 'createdAt')
-      .from('images')
-      .orderBy('createdAt', 'DESC')
-      .where('name', 'like', `%${search}%`)
-      .limit(5)
+      .orderBy('images.createdAt', 'DESC')
+      .where('images.name', 'like', `%${search}%`)
+      .limit(3)
       .offset(page);
-    return searchImage;
+    res.images = searchImage;
+    const [lastImage] = await knex('images')
+      .select('id')
+      .orderBy('createdAt')
+      .where('name', 'like', `%${search}%`)
+      .limit(1);
+    if (lastImage) {
+      res.lastImage = lastImage.id;
+    } else {
+      res.lastImage = null;
+    }
+    console.log(res);
+    return res;
   },
 
   async image(parent, { id }, { knex }, info) {
     const [image] = await knex
-      .select('id', 'user_id', 'name', 'image', 'createdAt')
+      .select('id', 'user_id', 'name', 'src', 'createdAt')
       .from('images')
       .where('id', id);
 

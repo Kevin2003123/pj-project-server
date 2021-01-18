@@ -12,14 +12,29 @@ type Image {
   id: ID!
   user_id: ID!
   name: String!
-  image: String!
+  src: String!
   author: User!
   createdAt: String!
 }
 
+type ImageAndUser {
+  id: ID!
+  user_id: ID!
+  avatar: String!
+  name: String!
+  src: String!
+  createdAt: String!
+  userName: String!
+}
+
+type LastImagesAndUsers {
+  images: [ImageAndUser!]!
+  lastImage: ID
+}
+
 type Query {
   users: [User!]!
-  images(search: String, page: Int): [Image!]!
+  images(search: String, page: Int): LastImagesAndUsers!
   image(id: ID!): Image!
 }
 
@@ -40,5 +55,5 @@ input CreateUserInput {
 
 input CreateImageInput {
   name: String!
-  image: String!
+  src: String!
 }
