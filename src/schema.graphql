@@ -12,6 +12,7 @@ type Image {
   id: ID!
   user_id: ID!
   name: String!
+  description: String!
   src: String!
   author: User!
   createdAt: String!
@@ -27,6 +28,12 @@ type ImageAndUser {
   userName: String!
 }
 
+type UserById {
+  user: User!
+  images: [Image!]!
+  lastImage: ID
+}
+
 type LastImagesAndUsers {
   images: [ImageAndUser!]!
   lastImage: ID
@@ -36,14 +43,35 @@ type Query {
   users: [User!]!
   images(search: String, page: Int): LastImagesAndUsers!
   image(id: ID!): Image!
+  user(user_id: ID!, page: Int): UserById!
 }
 
+type Profile {
+  id: ID!
+  name: String!
+  email: String!
+  avatar: String
+  success: Success!
+}
+
+type Success {
+  name: String
+  email: String
+  password: String
+}
 type Mutation {
   createUser(data: CreateUserInput!): User!
   createImage(data: CreateImageInput!): Image!
   login(email: String!, password: String!): User!
   auth(token: String!): User!
   updateAvatar(avatar: String!): String!
+  updateUser(data: UpdateUserInput!): Profile!
+}
+
+input UpdateUserInput {
+  name: String
+  email: String
+  password: String
 }
 
 input CreateUserInput {
@@ -55,5 +83,6 @@ input CreateUserInput {
 
 input CreateImageInput {
   name: String!
+  description: String!
   src: String!
 }

@@ -47,6 +47,7 @@ const Mutation = {
 
     const createImage = {
       name: data.name,
+      description: data.description,
       src: data.src,
       user_id
     };
@@ -54,7 +55,7 @@ const Mutation = {
     await knex('images').insert(createImage);
 
     const [image] = await knex
-      .select('id', 'user_id', 'name', 'src', 'createdAt')
+      .select('id', 'user_id', 'name', 'src', 'description', 'createdAt')
       .from('images')
       .where('user_id', user_id)
       .orderBy('createdAt', 'DESC')
@@ -106,6 +107,43 @@ const Mutation = {
     console.log(updatedImage);
 
     return avatar;
+  },
+
+  async updateUser(parent, { data }, { request, knex }, info) {
+    const user_id = getUserId(request);
+    let value = {};
+    let res = { success: { name: '', email: '', password: '' } };
+    if (data.name) {
+      value.name = 'name';
+      value.value = data.name;
+      res.success.name = 'Name changed';
+    }
+
+    if (data.email) {
+      value.name = 'email';
+      value.value = data.email;
+      res.success.email = 'Email changed';
+    }
+
+    if (data.password) {
+      value.name = 'password';
+      value.value = data.password;
+      res.success.password = 'Password changed';
+    }
+
+    if (!data.name && !data.password && !data.email) {
+      throw new Error('Introduce a valid data');
+    }
+
+    const update_user = await knex('users')
+      .where('id', user_id)
+      .update(value.name, value.value);
+
+    const [user] = await knex
+      .select('id', 'name', 'email', 'avatar')
+      .from('users')
+      .where('id', user_id);
+    return { ...res, ...user };
   }
 };
 module.exports = Mutation;

@@ -10,7 +10,7 @@ const Query = {
     if (!page) {
       page = 0;
     } else {
-      page = page * 3 - 3;
+      page = page * 20 - 20;
     }
     console.log(search);
     if (!search) {
@@ -31,7 +31,7 @@ const Query = {
 
       .orderBy('images.createdAt', 'DESC')
       .where('images.name', 'like', `%${search}%`)
-      .limit(3)
+      .limit(20)
       .offset(page);
     res.images = searchImage;
     const [lastImage] = await knex('images')
@@ -55,6 +55,39 @@ const Query = {
       .where('id', id);
 
     return image;
+  },
+
+  async user(parent, { user_id, page }, { knex }, info) {
+    if (!page) {
+      page = 0;
+    } else {
+      page = page * 10 - 10;
+    }
+    var res = {};
+    const [user] = await knex('users')
+      .select('id', 'name', 'avatar')
+      .where('id', user_id);
+    res.user = user;
+
+    const images = await knex('images')
+      .select('id', 'name', 'src', 'createdAt')
+      .where('user_id', user_id)
+      .orderBy('createdAt', 'DESC')
+      .limit(10)
+      .offset(page);
+    res.images = images;
+
+    const [lastImage] = await knex('images')
+      .select('id')
+      .where('user_id', user_id)
+      .orderBy('createdAt')
+      .limit(1);
+    if (lastImage) {
+      res.lastImage = lastImage.id;
+    } else {
+      res.lastImage = null;
+    }
+    return res;
   }
 };
 
