@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node":"15.x",
+    "npm":"6.x"
+  },
   "scripts": {
     "start":"node src/index.js",
     "dev": "nodemon src/index.js -e js,graphql",
